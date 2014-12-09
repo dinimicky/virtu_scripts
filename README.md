@@ -17,7 +17,7 @@ virtu_scripts
 > + The internal & boot-a ip address is from the last unused ip address.
 > + input parameters:
 
->> 1.        -m : -startMac : start MAC address: "AB:cD:EF:GH"
+>> 1.        -m : -macPrefix :  MAC address Prefix: "AB:cD:EF:GH"
 >> 2.        -i : -intNet : internal subnet: "ww.xx.yy.zz/mm"
 >> 3.        -b : -bootNet : boot-a subnet: "ww.xx.yy.zz/mm"
 >> 4.        -p : -payload : payload number: xx from 2 to 10
