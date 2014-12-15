@@ -22,8 +22,6 @@ virtu_scripts
 >> 3.        -b : -bootNet : boot-a subnet: "ww.xx.yy.zz/mm"
 >> 4.        -p : -payload : payload number: xx from 2 to 10
 
-> + output parameters:
+> + output:
 
->> 1. start_sc1_vm.sh : start SC-1 VM
->> 2. start_rest_vms.sh : start the rest VMs except SC-1
->> 3. auto_cluster.conf : cluster.conf file for virtual machines.
+>> the content of the cluster.conf file.
