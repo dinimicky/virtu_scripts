@@ -5,6 +5,19 @@
 
 > **Note: in most situation, the SC-1 image has been ready, you needn't install a new one.**
 
+> + create the SC-1 & SC-2 image:
+`qemu-img create -f qcow2 $SC-IMG_NAME 50G`
+
+>> For example: 
+`qemu-img create -f qcow2 mgc-sc-1.qcow 50G`
+`qemu-img create -f qcow2 mgc-sc-2.qcow 50G`
+
+> + define the MAC prefix for the VMs:
+> `MAC_PREFIX = the first 4 byte of the MAC address`
+
+>> For example:
+`MAC_PREFIX = 00:04:04:04`
+
 > + download the LDE ISO file
 
 > + use the qemu-kvm to start a virtual machine. And then you can install it manually.
