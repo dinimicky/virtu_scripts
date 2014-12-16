@@ -1,5 +1,5 @@
 import ipcalc
-import sys
+
 class Config(object):
     import re
     Parameter_Pattern = re.compile('\$([a-zA-Z0-9_]+)\$')
@@ -114,17 +114,6 @@ default-output vga
 
 # End of file
 '''
-
-class StartSC(Config):
-    Config_Template = '''#!/bin/bash
-qemu-kvm \
--smp cpus=1,cores=2 -m $MEM$ -boot order=cd  -cdrom $ISO_PATH$ \
--drive file=$IMAGE_PATH$,if=virtio,media=disk \
--netdev type=tap,script=$QEMU_IFUP_PATH$,id=$NET_ID1$ -device virtio-net-pci,netdev=$NET_ID1$,mac=$MAC1$ \
--netdev type=tap,script=$QEMU_IFUP_PATH$,id=$NET_ID2$ -device virtio-net-pci,netdev=$NET_ID2$,mac=$MAC2$ \
--netdev type=tap,script=$QEMU_IFUP_PATH$,id=$NET_ID3$ -device virtio-net-pci,netdev=$NET_ID3$,mac=$MAC3$ \
--netdev type=tap,script=$QEMU_IFUP_PATH$,id=$NET_ID4$ -device virtio-net-pci,netdev=$NET_ID4$,mac=$MAC4$ \
--vnc :$VNC_ID$ -usb -usbdevice tablet &'''
 
 from optparse import OptionParser
 def parse_parameters():
