@@ -13,7 +13,7 @@ function usage(){
 	echo "-v the vnc id such as 1, it will be set in the 5th byte of the MAC address."
 }
 
-while getopts ":m:p:i:o:v:h:f:" opt; do
+while getopts ":m:p:i:o:v:hf:" opt; do
     case $opt in
 	    m)
 		    Mem=$OPTARG
