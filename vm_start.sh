@@ -49,7 +49,7 @@ done
 echo $Mem $MacPrefix $Image $Iso $VncId
 
 qemu-kvm \
--smp cpus=1,cores=2 -m 2048 -boot order=cd  \
+-smp cpus=1,cores=2 -m 2048 -boot order=cdn  \
 ${Iso} \
 ${Image} \
 -netdev type=tap,script=${QemuIfup},id=net1 -device virtio-net-pci,netdev=net1,mac=${MacPrefix}:${MacId}:00 \
