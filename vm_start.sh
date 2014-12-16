@@ -4,7 +4,7 @@ function usage(){
     echo "The script is to start VM."
     echo ""
     echo "./vm_start.sh -m 2048 -v 1 -p 00:04:04:04 -i /home/ezonghu/mgc-sc-1.qcow -o /home/ezonghu/lde.iso"
-    echo "-h --help"
+    echo "-h help information"
     echo "-p the prefix of the mac address such as 00:04:04:04"
     echo "-i vm image such as /home/ezonghu/mgc-sc-1.qcow"
 	echo "-o iso image such as /home/ezonghu/lde.iso"
