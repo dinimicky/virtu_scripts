@@ -1,7 +1,7 @@
 ### Virtualization Environment Establishment
 
 
-+ #### How to install the SC-1 by LDE iso file
++ #### How to install the LDE on the VM
 
 > **Note: in most situation, the SC-1 image has been ready, you needn't install a new one.**
 
@@ -12,111 +12,64 @@
 `qemu-img create -f qcow2 mgc-sc-1.qcow 50G`
 `qemu-img create -f qcow2 mgc-sc-2.qcow 50G`
 
-> + define the MAC prefix for the VMs:
-> `MAC_PREFIX = the first 4 byte of the MAC address`
+> Assume:
 
->> For example:
-`MAC_PREFIX = 00:04:04:04`
+>> 
++ the path of the image: /home/ezonghu/mgc-sc-1.qcow
++ the path of the iso: /home/ezonghu/lde.iso
++ the path of the qemu-ifup script: /etc/kvm/qemu-ifup
++ the MAC prefix (the first 4 byte of the MAC address) of the VMs: 00:04:04:04
++ the VNC ID begin from 1
++ the Payload number is 4
++ SC blade memory is 2048MB
++ PL blade memeory is 4096MB
 
 > + download the LDE ISO file
 
-> + use the qemu-kvm to start a virtual machine. And then you can install it manually.
+> + Dowload the [vm_start.sh](http://github.com/dinimicky/virtu_scripts/blob/master/vm_start.sh) script.
+
+> + use the vm_start.sh to start a virtual machine. And then you can install it manually.
+
+>> 
+`./vm_start.sh -m 2048 -v 1 -p 00:04:04:04 -i /home/ezonghu/mgc-sc-1.qcow -o /home/ezonghu/lde.iso -f /etc/kvm/qemu-ifup`
+**Note: you can use the vncviewer to do the following installation**
+**Note: the default output should be 'vga'**
+
+> + Download the [auto_vm_cluster_gen.py](http://github.com/dinimicky/virtu_scripts/blob/master/auto_vm_cluster_gen.py) script.
+
+> + run the command to generate the cluster.conf file.
+
+>> `./auto_vm_cluster_gen.py -b 192.168.88.16/28 -i 192.168.88.0/28 -m 00:04:04:04 -p 4`
+
+> + update the cluster.conf in /cluster/etc/ and run the following commands:
 
 >> ```
-#SC-1
-qemu-kvm \
--smp cpus=1,cores=2 -m 2048 -boot order=cd  -cdrom /home/ezonghu/lde.iso \
--drive file=/home/ezonghu/mgc-sc-1.qcow,if=virtio,media=disk \
--netdev type=tap,script=/etc/kvm/qemu-ifup,id=net2 \
--device virtio-net-pci,netdev=net2,mac=00:04:04:04:00:00 \
--netdev type=tap,script=/etc/kvm/qemu-ifup,id=net3 \
--device virtio-net-pci,netdev=net3,mac=00:04:04:04:00:01 \
--netdev type=tap,script=/etc/kvm/qemu-ifup,id=net4 \
--device virtio-net-pci,netdev=net4,mac=00:04:04:04:00:02 \
--netdev type=tap,script=/etc/kvm/qemu-ifup,id=net5 \
--device virtio-net-pci,netdev=net5,mac=00:04:04:04:00:03 \
--vnc :1 -usb -usbdevice tablet &
-```
-
-> + update the cluster.conf in /cluster/etc/
-
-> ```
+cluster rpm -a linux-control-R7B02-0.x86_64.rpm -n 2
+cluster rpm -a linux-payload-R7B02-0.x86_64.rpm -n 3
+cluster rpm -a linux-payload-R7B02-0.x86_64.rpm -n 4
+cluster rpm -a linux-payload-R7B02-0.x86_64.rpm -n 5
+cluster rpm -a linux-payload-R7B02-0.x86_64.rpm -n 6
 cluster config -v
 cluster config -r -a
 cluster reboot -a
 ```
 
-> + use the qemu-kvm to start the rest virtual machines.
+> + start the rest VMs
 
 >> ```
-#SC-2
-qemu-kvm \
--smp cpus=1,cores=2 -m 2048 -boot order=cn  \
--drive file=/home/ezonghu/mgc-sc-2.qcow,if=virtio,media=disk \
--netdev type=tap,script=/etc/kvm/qemu-ifup,id=net12 \
--device virtio-net-pci,netdev=net12,mac=00:04:04:04:01:00 \
--netdev type=tap,script=/etc/kvm/qemu-ifup,id=net13 \
--device virtio-net-pci,netdev=net13,mac=00:04:04:04:01:01 \
--netdev type=tap,script=/etc/kvm/qemu-ifup,id=net14 \
--device virtio-net-pci,netdev=net14,mac=00:04:04:04:01:02 \
--netdev type=tap,script=/etc/kvm/qemu-ifup,id=net15 \
--device virtio-net-pci,netdev=net15,mac=00:04:04:04:01:03 \
--vnc :2 -usb -usbdevice tablet &
+./vm_start.sh -m 2048 -v 2 -p 00:04:04:04 -i /home/ezonghu/mgc-sc-2.qcow -f /etc/kvm/qemu-ifup
+./vm_start.sh -m 4096 -v 3 -p 00:04:04:04 -f /etc/kvm/qemu-ifup
+./vm_start.sh -m 4096 -v 4 -p 00:04:04:04 -f /etc/kvm/qemu-ifup
+./vm_start.sh -m 4096 -v 5 -p 00:04:04:04 -f /etc/kvm/qemu-ifup
+./vm_start.sh -m 4096 -v 6 -p 00:04:04:04 -f /etc/kvm/qemu-ifup
 ```
-```
-#PL-3
-qemu-kvm \
--smp cpus=1,cores=2 -m 4096 -boot n  \
--netdev type=tap,script=/etc/kvm/qemu-ifup,id=net22 \
--device virtio-net-pci,netdev=net22,mac=00:04:04:04:02:00 \
--netdev type=tap,script=/etc/kvm/qemu-ifup,id=net23 \
--device virtio-net-pci,netdev=net23,mac=00:04:04:04:02:01 \
--netdev type=tap,script=/etc/kvm/qemu-ifup,id=net24 \
--device virtio-net-pci,netdev=net24,mac=00:04:04:04:02:02 \
--netdev type=tap,script=/etc/kvm/qemu-ifup,id=net25 \
--device virtio-net-pci,netdev=net25,mac=00:04:04:04:02:03 \
--vnc :3 -usb -usbdevice tablet &
-```
-```
-#PL-4
-qemu-kvm \
--smp cpus=1,cores=2 -m 4096 -boot n  \
--netdev type=tap,script=/etc/kvm/qemu-ifup,id=net32 \
--device virtio-net-pci,netdev=net32,mac=00:04:04:04:03:00 \
--netdev type=tap,script=/etc/kvm/qemu-ifup,id=net33 \
--device virtio-net-pci,netdev=net33,mac=00:04:04:04:03:01 \
--netdev type=tap,script=/etc/kvm/qemu-ifup,id=net34 \
--device virtio-net-pci,netdev=net34,mac=00:04:04:04:03:02 \
--netdev type=tap,script=/etc/kvm/qemu-ifup,id=net35 \
--device virtio-net-pci,netdev=net35,mac=00:04:04:04:03:03 \
--vnc :4 -usb -usbdevice tablet &
-```
-```
-#PL-5
-qemu-kvm \
--smp cpus=1,cores=2 -m 4096 -boot n  \
--netdev type=tap,script=/etc/kvm/qemu-ifup,id=net42 \
--device virtio-net-pci,netdev=net42,mac=00:04:04:04:04:00 \
--netdev type=tap,script=/etc/kvm/qemu-ifup,id=net43 \
--device virtio-net-pci,netdev=net43,mac=00:04:04:04:04:01 \
--netdev type=tap,script=/etc/kvm/qemu-ifup,id=net44 \
--device virtio-net-pci,netdev=net44,mac=00:04:04:04:04:02 \
--netdev type=tap,script=/etc/kvm/qemu-ifup,id=net45 \
--device virtio-net-pci,netdev=net45,mac=00:04:04:04:04:03 \
--vnc :5 -usb -usbdevice tablet &
-```
-```
-#PL-6
-qemu-kvm \
--smp cpus=1,cores=2 -m 4096 -boot n  \
--netdev type=tap,script=/etc/kvm/qemu-ifup,id=net52 \
--device virtio-net-pci,netdev=net52,mac=00:04:04:04:05:00 \
--netdev type=tap,script=/etc/kvm/qemu-ifup,id=net53 \
--device virtio-net-pci,netdev=net53,mac=00:04:04:04:05:01 \
--netdev type=tap,script=/etc/kvm/qemu-ifup,id=net54 \
--device virtio-net-pci,netdev=net54,mac=00:04:04:04:05:02 \
--netdev type=tap,script=/etc/kvm/qemu-ifup,id=net55 \
--device virtio-net-pci,netdev=net55,mac=00:04:04:04:05:03 \
--vnc :6 -usb -usbdevice tablet &
-```
+
++ #### How to install the MGC
+
+> + Install ait component on the SC-1
+
+> + Prepare the DEPLOYMENT.READY file
+
+> + Prepare a correct repository
+
 
