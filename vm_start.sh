@@ -9,10 +9,11 @@ function usage(){
     echo "-i vm image such as /home/ezonghu/mgc-sc-1.qcow"
 	echo "-o iso image such as /home/ezonghu/lde.iso"
 	echo "-m the memory size such as 2048 means 2GB RAM"
+	echo "-f the qemu-ifup script such as /etc/kvm/qemu-ifup"
 	echo "-v the vnc id such as 1, it will be set in the 5th byte of the MAC address."
 }
 
-while getopts ":m:p:i:o:v:h:" opt; do
+while getopts ":m:p:i:o:v:h:f:" opt; do
     case $opt in
 	    m)
 		    Mem=$OPTARG
@@ -28,6 +29,10 @@ while getopts ":m:p:i:o:v:h:" opt; do
 			;;
 		v)
 		    VncId=$OPTARG
+			MacId=`printf "%0.2d" $OPTARG`
+			;;
+		f)
+			QemuIfup=$OPTARG
 			;;
 		h)
 		    usage
@@ -42,12 +47,13 @@ while getopts ":m:p:i:o:v:h:" opt; do
 done
 
 echo $Mem $MacPrefix $Image $Iso $VncId
-"
+
 qemu-kvm \
--smp cpus=1,cores=2 -m 2048 -boot order=cd  -cdrom /home/ezonghu/lde.iso \
--drive file=/home/ezonghu/mgc-sc-1.qcow,if=virtio,media=disk \
--netdev type=tap,script=/etc/kvm/qemu-ifup,id=net2 -device virtio-net-pci,netdev=net2,mac=00:04:04:04:00:00 \
--netdev type=tap,script=/etc/kvm/qemu-ifup,id=net3 -device virtio-net-pci,netdev=net3,mac=00:04:04:04:00:01 \
--netdev type=tap,script=/etc/kvm/qemu-ifup,id=net4 -device virtio-net-pci,netdev=net4,mac=00:04:04:04:00:02 \
--netdev type=tap,script=/etc/kvm/qemu-ifup,id=net5 -device virtio-net-pci,netdev=net5,mac=00:04:04:04:00:03 \
--vnc :1 -usb -usbdevice tablet &"
+-smp cpus=1,cores=2 -m 2048 -boot order=cd  \
+${Iso} \
+${Image} \
+-netdev type=tap,script=${QemuIfup},id=net1 -device virtio-net-pci,netdev=net1,mac=${MacPrefix}:${MacId}:00 \
+-netdev type=tap,script=${QemuIfup},id=net2 -device virtio-net-pci,netdev=net2,mac=${MacPrefix}:${MacId}:01 \
+-netdev type=tap,script=${QemuIfup},id=net3 -device virtio-net-pci,netdev=net3,mac=${MacPrefix}:${MacId}:02 \
+-netdev type=tap,script=${QemuIfup},id=net4 -device virtio-net-pci,netdev=net4,mac=${MacPrefix}:${MacId}:03 \
+-vnc :${VncId} -usb -usbdevice tablet &
