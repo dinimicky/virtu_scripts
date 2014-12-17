@@ -1,0 +1,46 @@
+#!/bin/bash
+set -x
+BRIDGE=br0
+
+NETWORK=192.168.88.0
+NETMASK=255.255.255.250
+GATEWAY=192.168.88.5
+
+function check_bridge() {
+    if brctl show | grep "^${BRIDGE}" &> /dev/null; then
+        return 1
+    else
+        return 0
+    fi
+}
+
+function create_bridge() {
+    brctl addbr ${BRIDGE}
+    brctl stp ${BRIDGE} on
+    brctl setfd ${BRIDGE} 0
+    ifconfig ${BRIDGE} ${GATEWAY} netmask ${NETMASK} up
+}
+
+function enable_ip_forward() {
+    echo 1 > /proc/sys/net/ipv4/ip_forward
+}
+
+function setup_bridge() {
+    check_bridge ${BRIDGE}
+    if [ $? -eq 0]; then
+        create_bridge
+    fi
+    enable_ip_forward
+}
+    
+if [ -n $1 ]; then
+    setup_bridge
+    tunctl -u `whoami` -t $1
+    ip link set $1 up
+    sleep 0.5s
+    brctl addif ${BRIDGE} $1
+    exit 0
+else
+    echo "Error: no interface specified"
+    exit 1
+fi
