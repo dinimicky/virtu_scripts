@@ -1,0 +1,386 @@
+[PL]
+com_PL=com:COM_D_TEMPLATE.tar.gz
+comsa_PL=comsa:COM_SA_D_TEMPLATE.tar.gz
+lde_brf_PL=lde_brf:LDE_BRF-CXP9021149_1-DEPLOYMENT.tar.gz
+brfc_PL=brfc:Brfc_D_TEMPLATE_CXP9020483_1-R3C03.tar.gz
+ss7caf_PL=ss7caf:SS7_CAF_Deployment_Template-CXP9020969.tar.gz
+evip_PL=evip:EVIP_D_TEMPLATE_x86_64.tar.gz
+mgc_PL=mgc:AIT_mgc_plugin.tar.gz
+
+[LM]
+ldews:LINUX_RUNTIME-CXP9020125_3.tar.gz 
+coremw:COREMW_RUNTIME.tar 
+com:COM_SDP.tar com_PL
+comsa:COM_SA_RUNTIME.tar.gz comsa_PL
+lde_brf:LDE_BRF-CXP9021148_1-RUNTIME.tar.gz lde_brf_PL
+brfc:Brfc_RUNTIME_CXP9018859_1-R3C03.tar.gz brfc_PL
+ss7caf:GZIPV1_SS7_CAF_LINUX_CBA_RUNTIME-ANA90137_1_.tar.gz ss7caf_PL
+evip:EVIP_RUNTIME_x86_64.tar.gz evip_PL
+cdf_rt:CDF_RT-CXP9030885-R1A35.tar.gz;lem:PSR-LEM_RT-CXP9025257-R8A03.tar.gz;dbs:PSR-DBS_RT-CXP9025264-R9A03.tar.gz;mgc:PSR-mgc-CXP9023722_1-R1A51.tar.gz mgc_PL
+
+[CD-BEGIN:LINUX_RUNTIME-CXP9020125_3.tar.gz:OS:None:cluster.conf]
+#
+# Default cluster.conf, generated Mon Jan  1 00:00:11 UTC 2007
+#
+# For information about the file format, see the LDE User Guide
+#
+
+timezone Asia/Beijing
+
+# Define nodes. Id, type and name are fixed.
+ 
+node 1 control SC-1
+node 2 control SC-2
+node 3 payload PL-3
+node 4 payload PL-4
+node 5 payload PL-5
+node 6 payload PL-6
+
+#Define node interfaces
+
+#Base MAC Address of SC-1(slot 17): 34:07:fb:35:0e:e1
+interface 1 eth0 ethernet 00:04:04:04:00:00
+interface 1 eth1 ethernet 00:04:04:04:00:01
+interface 1 eth2 ethernet 00:04:04:04:00:02
+interface 1 eth3 ethernet 00:04:04:04:00:03
+
+#Base MAC address of SC-2(slot 19): 3c:19:7d:e9:5b:01
+interface 2 eth0 ethernet 00:04:04:04:01:00
+interface 2 eth1 ethernet 00:04:04:04:01:01
+interface 2 eth2 ethernet 00:04:04:04:01:02
+interface 2 eth3 ethernet 00:04:04:04:01:03
+
+#Base MAC address of PL-3(slot 21): 3c:19:7d:e9:5b:fb
+interface 3 eth0 ethernet 00:04:04:04:02:00
+interface 3 eth1 ethernet 00:04:04:04:02:01
+interface 3 eth2 ethernet 00:04:04:04:02:02
+interface 3 eth3 ethernet 00:04:04:04:02:03
+
+#Base MAC address of PL-4(slot 23): 3c:19:7d:e9:5a:7f
+interface 4 eth0 ethernet 00:04:04:04:03:00
+interface 4 eth1 ethernet 00:04:04:04:03:01
+interface 4 eth2 ethernet 00:04:04:04:03:02
+interface 4 eth3 ethernet 00:04:04:04:03:03
+
+#Base MAC address of PL-3(slot 21): 3c:19:7d:e9:5b:fb
+interface 5 eth0 ethernet 00:04:04:04:04:00
+interface 5 eth1 ethernet 00:04:04:04:04:01
+interface 5 eth2 ethernet 00:04:04:04:04:02
+interface 5 eth3 ethernet 00:04:04:04:04:03
+
+#Base MAC address of PL-4(slot 23): 3c:19:7d:e9:5a:7f
+interface 6 eth0 ethernet 00:04:04:04:05:00
+interface 6 eth1 ethernet 00:04:04:04:05:01
+interface 6 eth2 ethernet 00:04:04:04:05:02
+interface 6 eth3 ethernet 00:04:04:04:05:03
+
+network internal 192.168.88.0/28
+network boot-a 192.168.88.16/28
+network boot-b 192.168.88.32/28
+network default 0.0.0.0/0
+network vAPP 192.168.111.0/24
+
+interface control eth0:1 alias
+interface control eth1:1 alias
+interface control eth1:2 alias
+
+#ip all eth0 internal dynamic
+#ip all eth1 boot-a dynamic
+
+ip 1 eth0 internal 192.168.88.8
+ip 2 eth0 internal 192.168.88.9
+ip 3 eth0 internal 192.168.88.10
+ip 4 eth0 internal 192.168.88.11
+ip 5 eth0 internal 192.168.88.12
+ip 6 eth0 internal 192.168.88.13
+
+ip 1 eth1 boot-a 192.168.88.23
+ip 2 eth1 boot-a 192.168.88.24
+ip 3 eth1 boot-a 192.168.88.25
+ip 4 eth1 boot-a 192.168.88.26
+ip 5 eth1 boot-a 192.168.88.27
+ip 6 eth1 boot-a 192.168.88.28
+
+mip control nfs eth0:1 internal 192.168.88.14
+mip control boot-a_mip eth1:1 boot-a 192.168.88.30
+mip control boot-b_mip eth1:2 boot-a 192.168.88.29
+
+tipc all dynamic eth2
+nfs 192.168.88.14
+property control bootserver bootS
+bootserver bootS servingblades 1 2 3 4 5 6
+bootserver bootS mode backup
+bootserver bootS network boot-a
+#bootserver bootS network boot-b
+bootserver bootS mip boot-a_mip
+#bootserver bootS mip boot-b_mip
+
+route control vAPP gateway 192.168.88.8
+ssh.rootlogin all on
+
+default-output vga
+
+# End of file
+
+[CD-END:LINUX_RUNTIME-CXP9020125_3.tar.gz:OS:None:cluster.conf]
+[CD-BEGIN:LINUX_RUNTIME-CXP9020125_3.tar.gz:OS:None:installation.conf]
+standalone_install=n
+disk_cache=n
+disk_device_path=/dev/sda
+partition_boot_size=4096
+partition_swap_size=4096
+partition_log_size=10240
+partition_root_size=4096
+shared_filesystem_size=20240
+cluster_install_reboot=y
+
+[CD-END:LINUX_RUNTIME-CXP9020125_3.tar.gz:OS:None:installation.conf]
+[CD-BEGIN:COREMW_RUNTIME.tar:OTHER:None:postinstall.conf]
+# Cmw SwM config see command cmw-swm-config-set
+# localFileStorePath is the path to the locally stored upgrade packages, required for swm action createUpgradePackageLocal
+localFileStorePath="/cluster/localFileStoreUP"
+# subType is the name of the node type. It describes the Managed Element, for example, "smallSystem", "mergedSystem".
+# The subType attribute is used to select the correct campaign to apply from an Upgrade Package.
+subType="mgcApp"
+# automaticBackup is set to 1 (true) if SwM is to take an automatic backup at activation.
+automaticBackup="1"
+# automaticRestore is set to 1 (true) in order for SwM to perform automatic restore at failure.
+automaticRestore="1"
+
+# Cmw ISP config
+# ISP Cluster Reboot Log Enable, set to 1 to enable ISP logging of Cluster Reboots
+ispClusterRebootLogEnabled="0"
+
+[CD-END:COREMW_RUNTIME.tar:OTHER:None:postinstall.conf]
+[CD-BEGIN:COREMW_RUNTIME.tar:OTHER:None:preinstall.conf]
+maxRetry="100"
+interval="2"
+
+[CD-END:COREMW_RUNTIME.tar:OTHER:None:preinstall.conf]
+[CD-BEGIN:COM_SDP.tar:SMF:COM_D_TEMPLATE.tar.gz]
+Installation_campaign=ERIC-COM-I1-TEMPLATE-CXP9017585_4-R1C01/ERIC-COM-I1-TEMPLATE-CXP9017585_4-R1C01.sdp
+[CD-END:COM_SDP.tar:SMF:COM_D_TEMPLATE.tar.gz]
+[CD-BEGIN:COM_SA_RUNTIME.tar.gz:SMF:COM_SA_D_TEMPLATE.tar.gz]
+Installation_campaign=COM_SA_I1_TEMPLATE-CXP9018914_3-R5B02/ComSa_install.sdp
+[CD-END:COM_SA_RUNTIME.tar.gz:SMF:COM_SA_D_TEMPLATE.tar.gz]
+[CD-BEGIN:LDE_BRF-CXP9021148_1-RUNTIME.tar.gz:SMF:LDE_BRF-CXP9021149_1-DEPLOYMENT.tar.gz]
+Installation_campaign=LDE_BRF-CXP9021149_1-R1G01_I1_TEMPLATE_BOTH_0/LDE_BRF-CXP9021149_1-R1G01_I1_TEMPLATE_BOTH_0.sdp
+[CD-END:LDE_BRF-CXP9021148_1-RUNTIME.tar.gz:SMF:LDE_BRF-CXP9021149_1-DEPLOYMENT.tar.gz]
+[CD-BEGIN:Brfc_RUNTIME_CXP9018859_1-R3C03.tar.gz:SMF:Brfc_D_TEMPLATE_CXP9020483_1-R3C03.tar.gz]
+Installation_campaign=Brfc-I-CXP9020483_1-R3C03/Brfc-I-CXP9020483_1-R3C03.sdp
+[CD-END:Brfc_RUNTIME_CXP9018859_1-R3C03.tar.gz:SMF:Brfc_D_TEMPLATE_CXP9020483_1-R3C03.tar.gz]
+[CD-BEGIN:Brfc_RUNTIME_CXP9018859_1-R3C03.tar.gz:SMF:Brfc_D_TEMPLATE_CXP9020483_1-R3C03.tar.gz:brfc.conf]
+# BRF-C Deployment configuration
+# 
+# This parameter is used to determine whether or not BRF-C must allow
+# the deletion of the backup marked as "Primary Restore Candidate" i.e. 
+# the first one in restoreEscalationList in BrmBackupLabelStore MOC in BRM MOM. 
+#
+#  1 = ENABLED
+#  2 = DISABLED
+#
+# The default value is 1 (ENABLED) to maintain backwards compatibility; however,
+# it is strongly recommended to disable this option to protect the 
+# node from a situation where primary restore candidate may be deleted 
+# accidentally or otherwise.
+#
+# This value cannot be changed after deployment.
+
+deletePrimaryRestoreCandidate="1"
+
+[CD-END:Brfc_RUNTIME_CXP9018859_1-R3C03.tar.gz:SMF:Brfc_D_TEMPLATE_CXP9020483_1-R3C03.tar.gz:brfc.conf]
+[CD-BEGIN:Brfc_RUNTIME_CXP9018859_1-R3C03.tar.gz:SMF:Brfc_D_TEMPLATE_CXP9020483_1-R3C03.tar.gz:resize.conf]
+# BRF-C Deployment configuration
+# 
+# The following two parameters are used to resize the install campaign
+# SCs: the number of SCs in the cluster, either 1 or 2
+# PLs: the number of PLs in the cluster, 0 or more
+#
+
+SCs=2
+PLs=4
+
+[CD-END:Brfc_RUNTIME_CXP9018859_1-R3C03.tar.gz:SMF:Brfc_D_TEMPLATE_CXP9020483_1-R3C03.tar.gz:resize.conf]
+[CD-BEGIN:GZIPV1_SS7_CAF_LINUX_CBA_RUNTIME-ANA90137_1_.tar.gz:SMF:SS7_CAF_Deployment_Template-CXP9020969.tar.gz]
+Installation_campaign=./ERIC-SS7CAF_I-TEMPLATE-CXP9020969-R1X/ERIC-SS7CAF_I-TEMPLATE-CXP9020969-R1X.sdp
+[CD-END:GZIPV1_SS7_CAF_LINUX_CBA_RUNTIME-ANA90137_1_.tar.gz:SMF:SS7_CAF_Deployment_Template-CXP9020969.tar.gz]
+[CD-BEGIN:EVIP_RUNTIME_x86_64.tar.gz:SMF:EVIP_D_TEMPLATE_x86_64.tar.gz]
+Installation_campaign=EVIP_I1_TEMPLATE-CXP9020395_1-R4B03/EVIP_INSTALL_SS-R4B03.sdp
+[CD-END:EVIP_RUNTIME_x86_64.tar.gz:SMF:EVIP_D_TEMPLATE_x86_64.tar.gz]
+[CD-BEGIN:EVIP_RUNTIME_x86_64.tar.gz:SMF:EVIP_D_TEMPLATE_x86_64.tar.gz:evipcfg.xml]
+<evip version="1.0">
+   <declarations>
+      <command_definition>
+      </command_definition>
+      <cluster primary_interface="eth2" macvlan_link_local_range_start="fe80::200:ff:feff:3000">
+         <node id="6" hostname="PL-6">
+         </node>
+         <node id="5" hostname="PL-5">
+         </node>	  
+         <node id="4" hostname="PL-4">
+         </node>
+         <node id="3" hostname="PL-3">
+         </node>
+         <node id="1" hostname="SC-1">
+         </node>
+         <node id="2" hostname="SC-2">
+         </node>
+      </cluster>
+      <syslog facility="3" log_level="6"/>
+   </declarations>
+   <port_ranges>
+      <wellknown protocol="tcp">1-39039</wellknown>
+      <wellknown protocol="udp">1-39039</wellknown>
+   </port_ranges>
+   <evipc_params failover_delay="5" ipv6_link_local_range_start="fe80::200:ff:fe01:3000" config_address="fe80::1234" max_hot_standby="3" ike_enabled="no" paired_system="no"/>
+   <albs>
+      <alb name="alb_oam" service_ip="fc00::200" num_keys="256" se_service_ip="fc00::300" num_ipsec_keys="256" udp_encapsulation_port="0" lbe_hash="2-tuple" ipvs_tcp_timeout="9000" ipvs_tcpfin_timeout="120" ipvs_udp_timeout="120">
+      <ersip_params lo_watermark="20" hi_watermark="80" timeout_requested_resources="10" timeout_connection_session="30" parse_ss_interval="5"/>
+         <lbes>
+            <lbe node="1" name="lbe_oam_1">
+            </lbe>
+            <lbe node="2" name="lbe_oam_2">
+            </lbe>
+         </lbes>
+         <ses>
+            <se node="1" name="se_oam_1">
+            </se>
+            <se node="2" name="se_oam_2">
+            </se>
+         </ses>
+         <fees>
+            <fee node="1" name="vip_oam_1" external_interface="eth3">
+               <routing_setup>
+                     <ospfv2 local_address="172.16.232.117/24" router_id="172.16.232.117" area="10.0.24.1" area_type="stub" hello_interval="10" dead_interval="40" retransmit_interval="5" router_priority="0" transmit_delay="1" spf_delay="500" spf_interval="1000"/>
+                     <bfd_ospfv2 echo="no" bfd_interval="300" minrx="300" multiplier="8"/>
+               </routing_setup>
+            </fee>
+            <fee node="2" name="vip_oam_2" external_interface="eth3">
+               <routing_setup>
+                     <ospfv2 local_address="172.16.232.119/24" router_id="172.16.232.119" area="10.0.24.1" area_type="stub" hello_interval="10" dead_interval="40" retransmit_interval="5" router_priority="0" transmit_delay="1" spf_delay="500" spf_interval="1000"/>
+                     <bfd_ospfv2 echo="no" bfd_interval="300" minrx="300" multiplier="8"/>
+               </routing_setup>
+            </fee>
+         </fees>
+         <vips>
+            <vip address="172.22.2.30" default="yes" equiv_src_addr="no"/>
+         </vips>
+         <target_pools>
+            <target_pool name="alb_oam_ipv4" distribution_method="round_robin" sticky_group="no" udp_stateless="no">
+               <payload node="1"/>
+               <payload node="2"/>
+            </target_pool>
+         </target_pools>
+         <flow_policies>
+            <!-- fw mark:6000001  -->
+            <flow_policy name="alb_oam_ipv4_tcp_port_22" address_family="ipv4" protocol="tcp" target_pool="alb_oam_ipv4" dest="172.22.2.30" dest_port="22"/>
+            <!-- fw mark:6000002  -->
+            <flow_policy name="alb_oam_ipv4_tcp_port_830" address_family="ipv4" protocol="tcp" target_pool="alb_oam_ipv4" dest="172.22.2.30" dest_port="830"/>
+            <!-- fw mark:6000003  -->
+            <flow_policy name="alb_oam_ipv4_udp_port_5060" address_family="ipv4" protocol="udp" target_pool="alb_oam_ipv4" dest="172.22.2.30" dest_port="5060"/>
+         </flow_policies>
+         <ipsec_tunnels>
+         </ipsec_tunnels>
+      </alb>
+      <alb name="alb_tr" service_ip="fc00::400" num_keys="256" se_service_ip="fc00::500" num_ipsec_keys="256" udp_encapsulation_port="0" lbe_hash="2-tuple" ipvs_tcp_timeout="9000" ipvs_tcpfin_timeout="120" ipvs_udp_timeout="120">
+      <ersip_params lo_watermark="20" hi_watermark="80" timeout_requested_resources="10" timeout_connection_session="30" parse_ss_interval="5"/>
+         <lbes>
+            <lbe node="3" name="lbe_traffic_3">
+            </lbe>
+            <lbe node="4" name="lbe_traffic_4">
+            </lbe>
+            <lbe node="5" name="lbe_traffic_5">
+            </lbe>
+            <lbe node="6" name="lbe_traffic_6">
+            </lbe>
+         </lbes>
+         <ses>
+            <se node="3" name="se_traffic_3">
+            </se>
+            <se node="4" name="se_traffic_4">
+            </se>
+            <se node="5" name="se_traffic_5">
+            </se>
+            <se node="6" name="se_traffic_6">
+            </se>
+         </ses>
+         <fees>
+            <fee node="3" name="vip_traffic_1" external_interface="eth3">
+               <routing_setup>
+                     <ospfv2 local_address="172.16.252.121/24" router_id="172.16.252.121" area="10.0.24.0" area_type="stub" hello_interval="10" dead_interval="40" retransmit_interval="5" router_priority="0" transmit_delay="1" spf_delay="500" spf_interval="1000"/>
+                     <bfd_ospfv2 echo="no" bfd_interval="300" minrx="300" multiplier="8"/>
+               </routing_setup>
+            </fee>
+            <fee node="4" name="vip_traffic_2" external_interface="eth3">
+               <routing_setup>
+                     <ospfv2 local_address="172.16.252.123/24" router_id="172.16.252.123" area="10.0.24.0" area_type="stub" hello_interval="10" dead_interval="40" retransmit_interval="5" router_priority="0" transmit_delay="1" spf_delay="500" spf_interval="1000"/>
+                     <bfd_ospfv2 echo="no" bfd_interval="300" minrx="300" multiplier="8"/>
+               </routing_setup>
+            </fee>
+         </fees>
+         <vips>
+            <vip address="172.22.2.158" default="yes" equiv_src_addr="no"/>
+         </vips>
+         <target_pools>
+            <target_pool name="alb_tr_ipv4" distribution_method="round_robin" sticky_group="no" udp_stateless="no">
+               <payload node="3"/>
+               <payload node="4"/>
+            </target_pool>
+         </target_pools>
+         <flow_policies>
+            <!-- fw mark:6000001  -->
+            <flow_policy name="alb_tr_ipv4_sctp_port_2905" address_family="ipv4" protocol="sctp" so_grp="1011250" dest="172.22.2.158" dest_port="2905"/>
+            <!-- fw mark:6000002  -->
+            <flow_policy name="alb_tr_ipv4_sctp_port_2906" address_family="ipv4" protocol="sctp" so_grp="1011250" dest="172.22.2.158" dest_port="2906"/>
+            <!-- fw mark:6000003  -->
+            <flow_policy name="alb_tr_ipv4_sctp_port_2907" address_family="ipv4" protocol="sctp" so_grp="1011250" dest="172.22.2.158" dest_port="2907"/>
+            <!-- fw mark:6000004  -->
+            <flow_policy name="alb_tr_ipv4_sctp_port_2944" address_family="ipv4" protocol="sctp" so_grp="1011250" dest="172.22.2.158" dest_port="2944"/>
+            <!-- fw mark:6000005  -->
+            <flow_policy name="alb_tr_ipv4_sctp_port_2945" address_family="ipv4" protocol="sctp" so_grp="1011250" dest="172.22.2.158" dest_port="2945"/>
+            <!-- fw mark:6000006  -->
+            <flow_policy name="alb_tr_ipv4_tcp_port_5061" address_family="ipv4" protocol="tcp" target_pool="alb_tr_ipv4" dest="172.22.2.158" dest_port="5061"/>
+            <!-- fw mark:6000007  -->
+            <flow_policy name="alb_tr_ipv4_udp_port_5060" address_family="ipv4" protocol="udp" target_pool="alb_tr_ipv4" dest="172.22.2.158" dest_port="5060"/>
+         </flow_policies>
+         <ipsec_tunnels>
+         </ipsec_tunnels>
+      </alb>
+   </albs>
+   <alb_selection_policies>
+      <alb_selection_policy name="alb_selection_policy_sctp" alb="alb_tr" process="fe_sctp" order="2.000000"/>
+      <alb_selection_policy name="exclude-loopback" alb="" dest="127.0.0.0/8" order="2.340000"/>
+   </alb_selection_policies>
+   <xfrm_alb_selection_policies>
+   </xfrm_alb_selection_policies>
+</evip>
+
+[CD-END:EVIP_RUNTIME_x86_64.tar.gz:SMF:EVIP_D_TEMPLATE_x86_64.tar.gz:evipcfg.xml]
+[CD-BEGIN:CDF_RT-CXP9030885-R1A35.tar.gz,PSR-LEM_RT-CXP9025257-R8A03.tar.gz,PSR-DBS_RT-CXP9025264-R9A03.tar.gz,PSR-mgc-CXP9023722_1-R1A51.tar.gz:OTHER:AIT_mgc_plugin.tar.gz:SiteSpec.conf]
+<?xml version="1.0" ?>
+<SiteConfig>
+  <Nodes>
+    <Node name="SC-1" profile="ControllerProfile" property="controller"/>
+    <Node name="SC-2" profile="ControllerProfile" property="controller"/>
+    <Node name="PL-3" profile="PayloadProfile"/>
+    <Node name="PL-4" profile="PayloadProfile"/>
+    <Node name="PL-5" profile="PayloadProfile"/>
+    <Node name="PL-6" profile="PayloadProfile"/>
+  </Nodes>
+  <SoftwareConfigData domain="Dbsv">
+    <parameter name="DbnVMCoreLinkSetup">
+      <value>Socket=*,Core=*,VT=*</value>
+    </parameter>
+    <parameter name="DbnVMSharedMemoryPercentage">
+      <value>10</value>
+    </parameter>
+    <parameter name="DbnVMRecordHeapPercentage">
+      <value>60</value>
+    </parameter>
+    <parameter name="DbnVMTipcHeapPercentage">
+      <value>30</value>
+    </parameter>
+  </SoftwareConfigData>
+</SiteConfig>
+
+[CD-END:CDF_RT-CXP9030885-R1A35.tar.gz,PSR-LEM_RT-CXP9025257-R8A03.tar.gz,PSR-DBS_RT-CXP9025264-R9A03.tar.gz,PSR-mgc-CXP9023722_1-R1A51.tar.gz:OTHER:AIT_mgc_plugin.tar.gz:SiteSpec.conf]
