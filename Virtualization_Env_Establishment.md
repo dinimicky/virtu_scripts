@@ -67,9 +67,46 @@ cluster reboot -a
 + #### How to install the MGC
 
 > + Install ait component on the SC-1
+>     + put ait component rpm package in /cluster/rpms/ on SC-1
+>     + run the command to install the ait
+        `cluster rpm -a ait-ta-CXP9019385_1-R4A.noarch.rpm -n 1`
+        `cluster rpm -A -n 1`
 
-> + Prepare the DEPLOYMENT.READY file
+> + Prepare the DEPLOYMENT.READY file, Here is the [DEPLOYMENT.ready](http://github.com/dinimicky/virtu_scripts/blob/master/DEPLOYMENT.ready) example.
 
-> + Prepare a correct repository
+> + use the command to creat the repository:
+    `mkdir -p /home/ait/repo`
 
+> + use the command to create the ait-repo.conf
+     `echo "file:///home/ait/repo" > ait-repo.conf`
 
+> + copy the packages in the 'repo' folder
+```
+/home/ait/repo/
+|---DEPLOYMENTready
+|---lm
+|   |---EVIP_RUNTIME_x86_64targz
+|   |---LDE_BRF-CXP9021148_1-RUNTIMEtargz
+|   |---LINUX_RUNTIME-CXP9020125_3targz
+|   |---COM_SDPtar
+|   |---Brfc_RUNTIME_CXP9018859_1-R3C03targz
+|   |---GZIPV1_SS7_CAF_LINUX_CBA_RUNTIME-ANA90137_1_targz
+|   |---PSR-LEM_RT-CXP9025257-R8A03targz
+|   |---PSR-mgc-CXP9023722_1-R1A51targz
+|   |---COREMW_RUNTIMEtar
+|   |---COM_SA_RUNTIMEtargz
+|   |---CDF_RT-CXP9030885-R1A35targz
+|   `---PSR-DBS_RT-CXP9025264-R9A03targz
+`---plugin
+    |---EVIP_D_TEMPLATE_x86_64targz
+    |---AIT_mgc_plugintargz
+    |---Brfc_D_TEMPLATE_CXP9020483_1-R3C03targz
+    |---COM_D_TEMPLATEtargz
+    |---COM_SA_D_TEMPLATEtargz
+    |---SS7_CAF_Deployment_Template-CXP9020969targz
+    `---LDE_BRF-CXP9021149_1-DEPLOYMENTtargz
+```
+
+> + run the command to start the ait installation
+`/opt/ait/etc/init.d/ait_ta start`
+**Note: during the installation, VM will be shutdown, the kvm process will be killed, please monitor it and if the process exists, please start it up manually**
