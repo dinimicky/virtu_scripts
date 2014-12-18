@@ -2,9 +2,11 @@
 set -x
 BRIDGE=br0
 
-NETWORK=192.168.88.0
-NETMASK=255.255.255.250
-GATEWAY=192.168.88.5
+NETMASK1=255.255.255.250
+GATEWAY1=192.168.88.4
+
+NETMASK2=255.255.255.0
+GATEWAY2=10.172.10.3
 
 function check_bridge() {
     if brctl show | grep "^${BRIDGE}" &> /dev/null; then
@@ -17,8 +19,8 @@ function check_bridge() {
 function create_bridge() {
     brctl addbr ${BRIDGE}
     brctl stp ${BRIDGE} on
-    brctl setfd ${BRIDGE} 0
-    ifconfig ${BRIDGE} ${GATEWAY} netmask ${NETMASK} up
+    ifconfig ${BRIDGE} ${GATEWAY1} netmask ${NETMASK1} up
+    ifconfig ${BRIDGE}:1 ${GATEWAY2} netmask ${NETMASK2} up
 }
 
 function enable_ip_forward() {
