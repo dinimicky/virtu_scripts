@@ -29,7 +29,7 @@ function enable_ip_forward() {
 
 function setup_bridge() {
     check_bridge ${BRIDGE}
-    if [ $? -eq 0]; then
+    if [ $? -eq 0 ]; then
         create_bridge
     fi
     enable_ip_forward
