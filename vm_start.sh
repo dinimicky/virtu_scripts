@@ -28,8 +28,13 @@ while getopts ":m:p:i:o:v:hf:" opt; do
 		    Iso="-cdrom "$OPTARG" "
 			;;
 		v)
-		    VncId=$OPTARG
-			MacId=`printf "%0.2d" $OPTARG`
+			if [ $OPTARG -lt 100 ]; then
+				VncId=$OPTARG
+				MacId=`printf "%0.2d" $OPTARG`
+			else
+				echo "VncId must be less than 100"
+				exit 1
+			fi
 			;;
 		f)
 			QemuIfup=$OPTARG
@@ -52,8 +57,8 @@ qemu-kvm \
 -smp cpus=1,cores=2 -m 2048 -boot order=cdn  \
 ${Iso} \
 ${Image} \
--netdev type=tap,script=${QemuIfup},id=net1 -device virtio-net-pci,netdev=net1,mac=${MacPrefix}:${MacId}:00 \
--netdev type=tap,script=${QemuIfup},id=net2 -device virtio-net-pci,netdev=net2,mac=${MacPrefix}:${MacId}:01 \
--netdev type=tap,script=${QemuIfup},id=net3 -device virtio-net-pci,netdev=net3,mac=${MacPrefix}:${MacId}:02 \
--netdev type=tap,script=${QemuIfup},id=net4 -device virtio-net-pci,netdev=net4,mac=${MacPrefix}:${MacId}:03 \
+-netdev type=tap,script=${QemuIfup},id=net${VncId}1 -device virtio-net-pci,netdev=net${VncId}1,mac=${MacPrefix}:${MacId}:00 \
+-netdev type=tap,script=${QemuIfup},id=net${VncId}2 -device virtio-net-pci,netdev=net${VncId}2,mac=${MacPrefix}:${MacId}:01 \
+-netdev type=tap,script=${QemuIfup},id=net${VncId}3 -device virtio-net-pci,netdev=net${VncId}3,mac=${MacPrefix}:${MacId}:02 \
+-netdev type=tap,script=${QemuIfup},id=net${VncId}4 -device virtio-net-pci,netdev=net${VncId}4,mac=${MacPrefix}:${MacId}:03 \
 -vnc :${VncId} -usb -usbdevice tablet &
